@@ -1,0 +1,1554 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TCL T89D vs Philips 75MLED610/94 — Due Diligence Report</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700;800&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#10161A;
+  --bg-panel:#161D22;
+  --bg-panel-alt:#1B242B;
+  --bg-hero:#0C1216;
+  --border:#28333B;
+  --border-soft:#1F2830;
+  --text:#E7EDEF;
+  --text-mid:#9FB0B8;
+  --text-dim:#5D6E76;
+  --confirmed:#45D9B0;
+  --confirmed-dim:#1C3730;
+  --gap:#E8A23D;
+  --gap-dim:#3A2E18;
+  --unclear:#E8735F;
+  --unclear-dim:#3A2019;
+  --tcl:#6FA8DC;
+  --philips:#E8735F;
+  --mono:'JetBrains Mono', ui-monospace, monospace;
+  --sans:'IBM Plex Sans', -apple-system, sans-serif;
+}
+*{box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{
+  margin:0;
+  background:var(--bg);
+  color:var(--text);
+  font-family:var(--sans);
+  font-size:15.5px;
+  line-height:1.65;
+  -webkit-font-smoothing:antialiased;
+}
+::selection{background:var(--confirmed-dim); color:var(--confirmed);}
+
+/* ---------- Layout shell ---------- */
+.page{
+  display:grid;
+  grid-template-columns:280px 1fr;
+  max-width:1400px;
+  margin:0 auto;
+}
+@media (max-width:980px){
+  .page{grid-template-columns:1fr;}
+  .toc-rail{display:none;}
+}
+
+/* ---------- TOC rail ---------- */
+.toc-rail{
+  border-right:1px solid var(--border-soft);
+  padding:28px 18px 60px 24px;
+  position:sticky;
+  top:0;
+  align-self:start;
+  height:100vh;
+  overflow-y:auto;
+}
+.toc-brand{
+  font-family:var(--mono);
+  font-size:11px;
+  letter-spacing:.14em;
+  color:var(--text-dim);
+  text-transform:uppercase;
+  margin-bottom:22px;
+}
+.toc-rail nav a{
+  display:block;
+  font-family:var(--mono);
+  font-size:12.5px;
+  color:var(--text-mid);
+  text-decoration:none;
+  padding:6px 0;
+  border-left:2px solid transparent;
+  padding-left:10px;
+  margin-left:-11px;
+  line-height:1.4;
+  transition:color .15s, border-color .15s;
+}
+.toc-rail nav a:hover{color:var(--text); border-left-color:var(--border);}
+.toc-rail nav a.active{color:var(--confirmed); border-left-color:var(--confirmed);}
+.toc-num{color:var(--text-dim); margin-right:6px;}
+.toc-rail nav a:hover .toc-num, .toc-rail nav a.active .toc-num{color:inherit;}
+
+/* ---------- Main column ---------- */
+.main{padding:0 0 100px 0; min-width:0;}
+
+/* ---------- Hero ---------- */
+.hero{
+  background:
+    radial-gradient(ellipse 900px 500px at 15% -10%, rgba(111,168,220,0.15), transparent 60%),
+    radial-gradient(ellipse 900px 500px at 100% 0%, rgba(232,115,95,0.13), transparent 60%),
+    var(--bg-hero);
+  border-bottom:1px solid var(--border);
+  padding:56px 56px 40px;
+}
+@media (max-width:640px){ .hero{padding:36px 20px 28px;} }
+.hero-eyebrow{
+  font-family:var(--mono);
+  font-size:11.5px;
+  letter-spacing:.16em;
+  text-transform:uppercase;
+  color:var(--text-dim);
+  margin-bottom:18px;
+  display:flex;
+  gap:10px;
+  align-items:center;
+}
+.hero-eyebrow .dot{width:6px;height:6px;border-radius:50%;background:var(--confirmed);box-shadow:0 0 8px var(--confirmed);}
+.hero h1{
+  font-family:var(--mono);
+  font-weight:800;
+  font-size:clamp(26px, 4vw, 42px);
+  line-height:1.15;
+  margin:0 0 18px;
+  letter-spacing:-0.01em;
+}
+.hero h1 .vs{color:var(--text-dim); font-weight:400; padding:0 6px;}
+.hero h1 .tcl-name{color:var(--tcl);}
+.hero h1 .philips-name{color:var(--philips);}
+.hero-sub{
+  color:var(--text-mid);
+  font-size:16px;
+  max-width:60ch;
+  margin-bottom:34px;
+}
+.hero-sub strong{color:var(--text); font-weight:600;}
+
+/* Confidence gauge + legend, the signature element */
+.confidence-panel{
+  display:grid;
+  grid-template-columns:auto 1fr;
+  gap:36px;
+  align-items:center;
+  background:var(--bg-panel);
+  border:1px solid var(--border);
+  border-radius:10px;
+  padding:26px 30px;
+}
+@media (max-width:720px){ .confidence-panel{grid-template-columns:1fr; gap:20px;} }
+.gauge-wrap{display:flex; flex-direction:column; align-items:center; gap:8px;}
+.gauge-label{font-family:var(--mono); font-size:10px; letter-spacing:.12em; text-transform:uppercase; color:var(--text-dim);}
+.legend-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:18px;}
+@media (max-width:720px){ .legend-grid{grid-template-columns:1fr;} }
+.legend-item{border-left:3px solid; padding-left:12px;}
+.legend-item .count{font-family:var(--mono); font-weight:700; font-size:22px; display:block;}
+.legend-item .label{font-size:12.5px; color:var(--text-mid); display:block; margin-top:2px;}
+.legend-item.lc-confirmed{border-color:var(--confirmed);}
+.legend-item.lc-confirmed .count{color:var(--confirmed);}
+.legend-item.lc-gap{border-color:var(--gap);}
+.legend-item.lc-gap .count{color:var(--gap);}
+.legend-item.lc-unclear{border-color:var(--unclear);}
+.legend-item.lc-unclear .count{color:var(--unclear);}
+
+/* ---------- Badges (used inline throughout the body) ---------- */
+.badge{
+  font-family:var(--mono);
+  font-size:11.5px;
+  font-weight:600;
+  padding:1px 7px;
+  border-radius:4px;
+  white-space:nowrap;
+  letter-spacing:.02em;
+}
+.badge-gap{background:var(--gap-dim); color:var(--gap); border:1px solid rgba(232,162,61,0.35);}
+.badge-unclear{background:var(--unclear-dim); color:var(--unclear); border:1px solid rgba(232,115,95,0.35);}
+.badge-confirmed{background:var(--confirmed-dim); color:var(--confirmed); border:1px solid rgba(69,217,176,0.35);}
+
+/* ---------- Preface / methodology ---------- */
+.preface{
+  margin:40px 56px;
+  padding:22px 26px;
+  background:var(--bg-panel);
+  border:1px solid var(--border);
+  border-left:3px solid var(--gap);
+  border-radius:8px;
+  color:var(--text-mid);
+  font-size:14.5px;
+}
+@media (max-width:640px){ .preface{margin:28px 20px;} }
+.preface h2{
+  font-family:var(--mono);
+  font-size:13px;
+  letter-spacing:.08em;
+  color:var(--gap);
+  text-transform:uppercase;
+  margin-top:0;
+}
+.preface ul{padding-left:20px;}
+.preface li{margin-bottom:10px;}
+.preface strong{color:var(--text);}
+
+/* ---------- Sections ---------- */
+.block{
+  padding:44px 56px;
+  border-bottom:1px solid var(--border-soft);
+  scroll-margin-top:20px;
+}
+@media (max-width:640px){ .block{padding:32px 20px;} }
+.block h2{
+  font-family:var(--mono);
+  font-weight:700;
+  font-size:12px;
+  letter-spacing:.14em;
+  text-transform:uppercase;
+  color:var(--text-dim);
+  margin:0 0 22px;
+  padding-bottom:14px;
+  border-bottom:1px solid var(--border);
+  display:flex;
+  align-items:baseline;
+  gap:10px;
+}
+.block h2::before{
+  content:attr(data-num);
+  font-size:26px;
+  font-weight:800;
+  color:var(--text);
+  letter-spacing:0;
+}
+.block-body h3{
+  font-family:var(--mono);
+  font-size:14px;
+  color:var(--tcl);
+  margin:28px 0 12px;
+}
+.block-body p{color:var(--text-mid); margin:0 0 16px;}
+.block-body strong{color:var(--text); font-weight:600;}
+.block-body em{color:var(--text-mid);}
+.block-body a{color:var(--confirmed); text-decoration:none; border-bottom:1px dotted var(--confirmed);}
+
+/* Lists */
+.block-body ul, .block-body ol{color:var(--text-mid); padding-left:22px; margin:0 0 18px;}
+.block-body li{margin-bottom:8px;}
+.block-body ol{counter-reset:item;}
+
+/* ---------- Tables ---------- */
+.block-body table{
+  width:100%;
+  border-collapse:collapse;
+  margin:18px 0 28px;
+  font-size:13.5px;
+  background:var(--bg-panel);
+  border:1px solid var(--border);
+  border-radius:8px;
+  overflow:hidden;
+}
+.block-body table thead th{
+  background:var(--bg-panel-alt);
+  font-family:var(--mono);
+  font-size:11px;
+  letter-spacing:.06em;
+  text-transform:uppercase;
+  color:var(--text-mid);
+  text-align:left;
+  padding:11px 14px;
+  border-bottom:1px solid var(--border);
+}
+.block-body table td{
+  padding:11px 14px;
+  border-bottom:1px solid var(--border-soft);
+  color:var(--text-mid);
+  vertical-align:top;
+}
+.block-body table td:first-child{color:var(--text); font-weight:500;}
+.block-body table tbody tr:last-child td{border-bottom:none;}
+.block-body table tbody tr:hover{background:rgba(255,255,255,0.015);}
+.block-body table code{font-family:var(--mono); font-size:12.5px;}
+
+/* horizontal scroll for wide tables on mobile */
+.table-scroll{overflow-x:auto;}
+
+/* ---------- hr ---------- */
+.block-body hr{border:none; border-top:1px solid var(--border); margin:28px 0;}
+
+/* ---------- Pros/cons lists get a tint ---------- */
+.block-body h3 + ol{
+  background:var(--bg-panel);
+  border:1px solid var(--border);
+  border-radius:8px;
+  padding:16px 16px 16px 38px;
+}
+
+/* ---------- footer ---------- */
+.report-footer{
+  padding:40px 56px 60px;
+  color:var(--text-dim);
+  font-family:var(--mono);
+  font-size:12px;
+  line-height:1.7;
+}
+@media (max-width:640px){ .report-footer{padding:28px 20px 48px;} }
+
+/* Back to top */
+.totop{
+  position:fixed;
+  bottom:24px;
+  right:24px;
+  width:42px;
+  height:42px;
+  border-radius:50%;
+  background:var(--bg-panel);
+  border:1px solid var(--border);
+  color:var(--text-mid);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  cursor:pointer;
+  font-family:var(--mono);
+  text-decoration:none;
+  opacity:0;
+  pointer-events:none;
+  transition:opacity .2s, transform .2s, color .2s, border-color .2s;
+  z-index:50;
+}
+.totop.show{opacity:1; pointer-events:auto;}
+.totop:hover{color:var(--confirmed); border-color:var(--confirmed);}
+
+@media (prefers-reduced-motion: reduce){
+  html{scroll-behavior:auto;}
+  .totop{transition:none;}
+}
+</style>
+</head>
+<body>
+<div class="page">
+<aside class="toc-rail">
+  <div class="toc-brand">Due&nbsp;Diligence&nbsp;/ 75&Prime; TV Comparison</div>
+  <nav id="toc"></nav>
+</aside>
+<main class="main">
+
+<header class="hero">
+  <div class="hero-eyebrow"><span class="dot"></span> India Market &middot; 2026 Model Year &middot; Compiled July 2026</div>
+  <h1><span class="tcl-name">TCL&nbsp;T89D</span><span class="vs">vs</span><span class="philips-name">Philips&nbsp;75MLED610/94</span></h1>
+  <p class="hero-sub">A complete ownership due-diligence report for two ~75-inch, ₹80,000&ndash;₹90,000 QD&#8209;Mini&nbsp;LED sets &mdash; built from live retailer listings, verified owner reviews, and dated forum/consumer-court records. <strong>No independent lab review exists for either model</strong>, so every claim below is labeled by how well it's actually supported.</p>
+
+  <div class="confidence-panel">
+    <div class="gauge-wrap">
+      <div style="position:relative;width:118px;height:118px;">
+  <div style="width:118px;height:118px;border-radius:50%;background:conic-gradient(var(--confirmed) 0deg 195.7deg, var(--gap) 195.7deg 307.6deg, var(--unclear) 307.6deg 360deg);"></div>
+  <div style="position:absolute;inset:14px;border-radius:50%;background:var(--bg-panel);display:flex;flex-direction:column;align-items:center;justify-content:center;">
+    <span style="font-family:var(--mono);font-weight:800;font-size:22px;color:var(--text);">103</span>
+    <span style="font-family:var(--mono);font-size:9px;color:var(--text-dim);letter-spacing:.08em;">TAGGED CLAIMS</span>
+  </div>
+</div>
+      <div class="gauge-label">Claim&nbsp;Confidence&nbsp;Mix</div>
+    </div>
+    <div class="legend-grid">
+      <div class="legend-item lc-confirmed">
+        <span class="count">56+</span>
+        <span class="label">Facts confirmed against a primary source (retailer spec sheet, official listing, or dated review)</span>
+      </div>
+      <div class="legend-item lc-gap">
+        <span class="count">32</span>
+        <span class="label">Explicit data gaps &mdash; marked <strong style="color:var(--gap)">Data not available</strong> rather than estimated</span>
+      </div>
+      <div class="legend-item lc-unclear">
+        <span class="count">15</span>
+        <span class="label">Manufacturer claims that could not be independently verified</span>
+      </div>
+    </div>
+  </div>
+</header>
+<div class="preface"><h2 id="a-note-on-methodology-and-data-honesty-please-read-before-the-report">A NOTE ON METHODOLOGY AND DATA HONESTY (please read before the report)</h2><div class="block-body">
+<p>I searched extensively across manufacturer pages, Amazon.in, Flipkart, Reliance Digital, Smartprix, RTINGS, HDTVTest, FlatpanelsHD, AVForums, AVSForum, HiFiVision (India's main AV enthusiast forum), Trustpilot, and consumer-court records. Here is the honest state of the evidence:</p>
+<ul>
+<li>
+<p><strong>Neither TV has been lab-tested by RTINGS, HDTVTest, FlatpanelsHD, WhatHiFi, or Tom's Guide.</strong> Those outlets review TCL's <em>global</em> flagship line (X11L, C8K/QM8K, QM9K, C855, C845) and Philips' <em>European</em> Ambilight/OLED range — not India-only budget/mid-range SKUs like the T89D or 75MLED610/94. I checked directly; there is no match.</p>
+</li>
+<li>
+<p>That means specifics like <strong>measured contrast ratio, exact dimming-zone count, measured HDR peak nits, Delta E color accuracy, input lag in milliseconds, and panel manufacturer</strong> are <strong>not independently verified</strong> for these specific models. I am not going to invent numbers dressed up as lab data — I mark these <strong>"<span class="badge badge-gap">Data not available</span> (no independent lab review found)"</strong> throughout, and instead tell you what is actually knowable: manufacturer-claimed specs, real user reports, pricing history, brand-level reliability patterns, and after-sales track record.</p>
+</li>
+<li>
+<p>Where I do cite a number, it's either (a) directly from the official spec sheet / retailer listing, or (b) from a verified owner review, and I say so.</p>
+</li>
+<li>
+<p>This is a genuinely close, budget-to-mid-range 75" QD-Mini LED matchup (~₹80,000–₹90,000 street price), not a flagship comparison — treat any source claiming lab-verified 5,000-nit brightness or "1,000+ dimming zones" for <em>these exact SKUs</em> with skepticism unless it cites a primary source.</p>
+</li>
+</ul>
+<hr />
+</div></div>
+<section class="block"><h2 id="section-1-product-overview">SECTION 1 — PRODUCT OVERVIEW</h2><div class="block-body">
+<table>
+<thead>
+<tr>
+<th>Item</th>
+<th>TCL T89D (75T89D)</th>
+<th>Philips 75MLED610/94</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Manufacturer / Brand owner</td>
+<td>TCL Electronics (Chinese OEM, sells directly under its own brand in India)</td>
+<td>Brand licensed — <strong>Philips-branded TVs in India are manufactured by Super Plastronics Pvt. Ltd. (SPPL)</strong> under license from <strong>Skyworth</strong>, which holds the Philips TV trademark for India. Philips (Versuni/TP Vision) does not build these sets itself.</td>
+</tr>
+<tr>
+<td>Country of manufacture</td>
+<td>Assembled in India (TCL has an India assembly plant; large-panel sets are commonly CKD/SKD-assembled)</td>
+<td>Assembled in India by SPPL (Super Plastronics also holds Kodak, Thomson, Blaupunkt, Westinghouse licenses)</td>
+</tr>
+<tr>
+<td>Launch date</td>
+<td>2026 model year, on sale by ~Q1–Q2 2026 (confirmed live listings from May–June 2026)</td>
+<td>2026 model year, on sale by ~April–May 2026</td>
+</tr>
+<tr>
+<td>Available screen sizes</td>
+<td>55", 65", 75" confirmed live on Flipkart/Smartprix</td>
+<td>65", 75" confirmed live on Amazon/Reliance Digital/Smartprix</td>
+</tr>
+<tr>
+<td>Panel/backlight tech</td>
+<td>"QD-Mini LED Dimming," TCL "Ai HVA" panel, QLED (quantum dot)</td>
+<td>"QD-Mini LED" panel, Philips "Halo Control Technology" (local dimming), QLED</td>
+</tr>
+<tr>
+<td>MRP (list price, 75")</td>
+<td>₹1,79,990 listed MRP on Flipkart, heavily discounted</td>
+<td>₹1,89,999 listed MRP on Reliance Digital, heavily discounted</td>
+</tr>
+<tr>
+<td>Street/selling price (75", mid-2026)</td>
+<td><strong>₹89,990–₹89,999</strong> (Smartprix aggregator, Flipkart)</td>
+<td><strong>₹79,999–₹81,990</strong> (Smartprix, Amazon, Reliance Digital)</td>
+</tr>
+<tr>
+<td>Price trend</td>
+<td>Roughly flat over the prior month at time of data collection (June 2026); no major crash observed</td>
+<td>Price fell ~1% (~₹941) in the month before data collection — mild downward drift</td>
+</tr>
+<tr>
+<td>Amazon price (75")</td>
+<td>Not confirmed as a primary Amazon listing at time of search (Flipkart appears to be TCL's stronger channel for this SKU in India)</td>
+<td>₹79,999–₹80,999, confirmed listed on Amazon.in with verified reviews</td>
+</tr>
+<tr>
+<td>Flipkart price (75")</td>
+<td>₹89,990, confirmed with exchange offer and "30-day replacement guarantee"</td>
+<td>Data not consistently found as the primary channel — Amazon and Reliance Digital feature more prominently</td>
+</tr>
+<tr>
+<td>Offline stores (Croma / Vijay Sales / Reliance Digital)</td>
+<td>Both brands are broadly stocked across India's major electronics chains; TCL has strong offline retail penetration. Exact live in-store pricing for this specific SKU was not independently verified at each individual retailer — <strong><span class="badge badge-gap">Data not available</span> for a store-by-store price table.</strong></td>
+<td>Same caveat applies. Reliance Digital listing confirmed at ₹81,990.</td>
+</tr>
+<tr>
+<td>Bundle/cashback/exchange offers</td>
+<td>Flipkart listing shows exchange-offer eligibility; bank-card instant discounts are typical during sale events (Big Billion Days, Republic Day, etc.) but change constantly — <strong>check live listing at time of purchase</strong></td>
+<td>Reliance Digital and Amazon listings show standard bank-offer/EMI structures; specifics change with sale calendars</td>
+</tr>
+<tr>
+<td>Extended warranty cost</td>
+<td>Not published on the listings reviewed — typically ₹3,000–₹7,000 for a 75" panel via Amazon/Flipkart/OEM extended plans in this price bracket, but <strong>this is a category-typical estimate, not a confirmed T89D price</strong></td>
+<td>Same caveat — typically ₹3,000–₹7,000 range for OEM/marketplace extended care on a 75" set</td>
+</tr>
+<tr>
+<td>Installation charges</td>
+<td>Wall-mount/installation is commonly free-with-purchase from large retailers for 75"+ sets, but <span class="badge badge-unclear">not confirmed</span> for this specific listing</td>
+<td>Same — <span class="badge badge-unclear">not confirmed</span> for this specific listing</td>
+</tr>
+<tr>
+<td>Wall mount included?</td>
+<td>Table stand included; wall bracket typically <strong>not</strong> included in-box at this price point (industry-standard, <span class="badge badge-unclear">not confirmed</span> per-unit)</td>
+<td>Same expectation, <span class="badge badge-unclear">not confirmed</span> per-unit</td>
+</tr>
+<tr>
+<td>Remote features</td>
+<td>Voice remote (Google Assistant) typical for TCL's Google TV sets in this range</td>
+<td>Voice remote (Google Assistant) typical for Google TV 5.0 sets — Reliance Digital listing confirms Google TV 5.0</td>
+</tr>
+<tr>
+<td>Warranty terms</td>
+<td><strong>1 year manufacturer warranty</strong> is the India-market standard for both brands at this tier</td>
+<td><strong>1 year manufacturer warranty</strong>, confirmed explicitly on the Reliance Digital and Amazon listings</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Hidden disadvantage not obvious from the spec sheet:</strong> Both "TCL" and "Philips" as sold in India are <em>not</em> the same corporate entity as the panel/brand you may associate with international reviews. TCL sells directly, but Philips TVs in India are a licensed product from <strong>Super Plastronics (SPPL)</strong>, a company that also brands Kodak, Thomson, Blaupunkt, and Westinghouse TVs — i.e., a multi-brand Indian TV assembler, not Philips' own European TP Vision/Versuni engineering team. This matters for your after-sales expectations (Section 10) and explains why the internal hardware and software experience of "Philips" India TVs often more closely resembles other SPPL-badged brands than European Philips Ambilight sets.</p>
+<hr />
+</div></section>
+<section class="block"><h2 id="section-2-display-hardware">SECTION 2 — DISPLAY HARDWARE</h2><div class="block-body">
+<table>
+<thead>
+<tr>
+<th>Spec</th>
+<th>TCL T89D</th>
+<th>Philips 75MLED610/94</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Display technology</td>
+<td>QLED (quantum dot) + QD-Mini LED backlight</td>
+<td>QLED (quantum dot) + QD-Mini LED backlight</td>
+</tr>
+<tr>
+<td>Panel type</td>
+<td>TCL-branded "Ai HVA" panel (HVA = a VA-panel variant TCL uses to improve viewing angles over standard VA)</td>
+<td>Not disclosed on listings — <span class="badge badge-gap">Data not available</span></td>
+</tr>
+<tr>
+<td>Panel manufacturer</td>
+<td>Very likely TCL CSOT (TCL's own panel-manufacturing subsidiary, which supplies much of the industry) — plausible but <strong>not explicitly confirmed for this exact SKU</strong></td>
+<td>Not disclosed; Indian-assembled Mini LED sets in this price bracket commonly source panels from Chinese panel makers (BOE, CSOT, HKC) via the OEM/ODM supply chain, but <strong>the specific panel source for this model is not published anywhere I could verify</strong></td>
+</tr>
+<tr>
+<td>Panel lottery possibility</td>
+<td>Not documented for this SKU; budget/mid-range Mini LED sets from any brand can have batch-to-batch panel or backlight variance — <span class="badge badge-gap">Data not available</span></td>
+<td>Same — <span class="badge badge-gap">Data not available</span></td>
+</tr>
+<tr>
+<td>Native/measured contrast</td>
+<td>Manufacturer doesn't publish a verified static contrast figure for this SKU; older Philips India listings for a different 75" model quoted a generic "3000:1" figure which is a stock LCD spec and <strong><span class="badge badge-unclear">not confirmed</span> for this exact SKU</strong></td>
+<td><span class="badge badge-gap">Data not available</span> (measured)</td>
+</tr>
+<tr>
+<td>Dimming zone count</td>
+<td>Marketed as "QD-Mini LED Dimming" — <strong>exact zone count not published</strong> in any listing found</td>
+<td>Marketed as "Local Dimming Series" — <strong>exact zone count not published</strong> in any listing found</td>
+</tr>
+<tr>
+<td>Peak SDR / HDR brightness</td>
+<td>Not independently measured; <strong><span class="badge badge-gap">Data not available</span>.</strong> (For context, TCL's <em>global flagship</em> Mini LED sets, like C8K/QM8K, measure in the 2,000–3,000 nit range and the range-topping QM9K/X11L reach 4,500–6,000 nits — but the T89D is a lower-tier model and will not be in that range. Treat any specific nit claim for the T89D as unverified until an independent test appears.)</td>
+<td>Same caveat — <strong><span class="badge badge-gap">Data not available</span>.</strong> Halo Control is Philips' marketing name for its local-dimming algorithm; it does not by itself tell you brightness or zone count.</td>
+</tr>
+<tr>
+<td>Blooming / black uniformity / clouding</td>
+<td>Not independently tested. Real owner reviews (see Section 11) generally praise "deep blacks" for both, but owner impressions are not equivalent to lab measurement and are prone to placebo/expectation bias</td>
+<td>Same</td>
+</tr>
+<tr>
+<td>Viewing angles</td>
+<td>HVA panel is specifically marketed by TCL as improving off-axis viewing vs standard VA</td>
+<td>Listing explicitly states <strong>178° wide viewing angle</strong> claim</td>
+</tr>
+<tr>
+<td>DCI-P3 / BT.2020 coverage</td>
+<td>Not published for this SKU</td>
+<td>Not published for this SKU</td>
+</tr>
+<tr>
+<td>Factory calibration / Delta E</td>
+<td><span class="badge badge-gap">Data not available</span> — no independent colorimeter test exists for either</td>
+<td><span class="badge badge-gap">Data not available</span></td>
+</tr>
+<tr>
+<td>Response time / motion blur / judder</td>
+<td>Not independently tested</td>
+<td>Not independently tested</td>
+</tr>
+<tr>
+<td>Upscaling / video processor</td>
+<td>TCL markets an "AiPQ"-family processor across its range; exact chip for T89D <span class="badge badge-unclear">not confirmed</span></td>
+<td>"Quad Core Processor" stated on Amazon listing; not otherwise specified</td>
+</tr>
+<tr>
+<td>Anti-reflection coating / screen finish</td>
+<td>Not specified</td>
+<td>Not specified</td>
+</tr>
+<tr>
+<td>Image retention / burn-in risk</td>
+<td>Not applicable in the traditional OLED sense — these are LCD/Mini-LED sets, so burn-in risk is effectively negligible (image retention on LCD is rare and usually temporary)</td>
+<td>Same — negligible burn-in risk on LCD-based tech</td>
+</tr>
+<tr>
+<td>Expected panel lifespan</td>
+<td>LCD/Mini-LED backlights typically rated informally in the 40,000–60,000-hour half-life range industry-wide; <strong>no brand-specific figure published for either model</strong></td>
+<td>Same industry-typical range; <strong>not brand-specific confirmed</strong></td>
+</tr>
+</tbody>
+</table>
+<hr />
+</div></section>
+<section class="block"><h2 id="section-3-hdr-performance">SECTION 3 — HDR PERFORMANCE</h2><div class="block-body">
+<table>
+<thead>
+<tr>
+<th>Feature</th>
+<th>TCL T89D</th>
+<th>Philips 75MLED610/94</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>HDR10</td>
+<td>Yes (implied by Dolby Vision support)</td>
+<td>Yes, explicitly listed</td>
+</tr>
+<tr>
+<td>HDR10+</td>
+<td>Not explicitly listed in the specs found — <span class="badge badge-unclear">not confirmed</span></td>
+<td><span class="badge badge-confirmed">Yes, explicitly listed</span> on the Amazon spec sheet</td>
+</tr>
+<tr>
+<td>Dolby Vision</td>
+<td><strong>Yes — "Dolby Vision-Atmos" explicitly marketed</strong></td>
+<td><strong>Yes — explicitly listed</strong></td>
+</tr>
+<tr>
+<td>HLG</td>
+<td>Typically bundled with Dolby Vision/HDR10 support on Google TV sets, but not explicitly itemized for either — <strong>assume yes, not separately confirmed</strong></td>
+<td>Same assumption, not separately confirmed</td>
+</tr>
+<tr>
+<td>IMAX Enhanced</td>
+<td>Not mentioned for either — likely absent at this price tier</td>
+<td>Not mentioned — likely absent</td>
+</tr>
+<tr>
+<td>Measured HDR brightness / tone mapping / shadow-highlight detail</td>
+<td><span class="badge badge-gap">Data not available</span> for both — no lab review exists</td>
+<td><span class="badge badge-gap">Data not available</span></td>
+</tr>
+<tr>
+<td>Dynamic metadata support</td>
+<td>Dolby Vision by definition carries dynamic metadata; both sets support it</td>
+<td>Same</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Practical read:</strong> on paper, the Philips has a slight edge by explicitly advertising HDR10+ in addition to Dolby Vision, giving it dual dynamic-HDR format coverage (useful since some streaming content is HDR10+ only, e.g., some Amazon Prime Video and Samsung/20th Century titles, while other content is Dolby Vision only, e.g., most Netflix/Apple TV+ Dolby Vision titles). The T89D's listing did not surface an explicit HDR10+ claim — this doesn't mean it lacks it, but it wasn't confirmed.</p>
+<hr />
+</div></section>
+<section class="block"><h2 id="section-4-gaming-performance">SECTION 4 — GAMING PERFORMANCE</h2><div class="block-body">
+<table>
+<thead>
+<tr>
+<th>Feature</th>
+<th>TCL T89D</th>
+<th>Philips 75MLED610/94</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Native refresh rate</td>
+<td><strong>144Hz</strong>, explicitly marketed</td>
+<td><strong>120Hz</strong> ("120Hz Motion Clarity HSR"), explicitly marketed</td>
+</tr>
+<tr>
+<td>Effective/interpolated refresh</td>
+<td><strong>DLG 288Hz</strong> (TCL's frame-doubling/interpolation claim), MEMC 120Hz</td>
+<td>MEMC mentioned; no DLG-equivalent figure published</td>
+</tr>
+<tr>
+<td>VRR / FreeSync / G-Sync</td>
+<td>Not explicitly itemized in the listings found for this SKU — TCL's higher-tier sets support VRR/FreeSync Premium, but <strong><span class="badge badge-unclear">not confirmed</span> for T89D specifically</strong></td>
+<td>Not explicitly itemized — <span class="badge badge-unclear">not confirmed</span></td>
+</tr>
+<tr>
+<td>ALLM</td>
+<td>Not explicitly listed for T89D</td>
+<td><span class="badge badge-confirmed">Yes, explicitly listed</span> on Amazon spec sheet</td>
+</tr>
+<tr>
+<td>HDMI 2.1 bandwidth / number of full-bandwidth ports</td>
+<td>Not specified how many of its HDMI ports are full HDMI 2.1 vs 2.0 — <span class="badge badge-gap">Data not available</span></td>
+<td>Reliance Digital confirms <strong>3 HDMI ports total</strong>; which (if any) are full HDMI 2.1 is <strong>not specified</strong></td>
+</tr>
+<tr>
+<td>Input lag (measured)</td>
+<td><span class="badge badge-gap">Data not available</span> — no independent test</td>
+<td><span class="badge badge-gap">Data not available</span></td>
+</tr>
+<tr>
+<td>4K120 support</td>
+<td>Implied by 144Hz native panel + Google TV Game Bar features, but <strong>not explicitly confirmed in ms/Hz combination</strong></td>
+<td>Implied by ALLM + 120Hz, but full 4K120 chain (panel + HDMI + processing) <strong>not independently confirmed</strong></td>
+</tr>
+<tr>
+<td>Console compatibility (PS5 / Xbox Series X)</td>
+<td>Should run 4K/60 without issue on any modern console; true 4K120 VRR gaming compatibility is <strong>unverified</strong> for this SKU</td>
+<td>Same caveat</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Practical read:</strong> the T89D's 144Hz native panel and DLG 288Hz claim give it a marketing edge for gaming enthusiasts, but neither brand publishes a verified input-lag figure or confirms which HDMI ports are true 2.1, which matters more in practice than the headline refresh number. If console/PC gaming at 4K120 with VRR is a priority, I'd treat both brands' claims as unverified until you can test in-store or find a firmware-specific report from an owner.</p>
+<hr />
+</div></section>
+<section class="block"><h2 id="section-5-audio">SECTION 5 — AUDIO</h2><div class="block-body">
+<table>
+<thead>
+<tr>
+<th>Feature</th>
+<th>TCL T89D</th>
+<th>Philips 75MLED610/94</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Speaker configuration / power</td>
+<td><strong>35W, Onkyo 2.1 Hi-Fi System</strong>, explicitly marketed</td>
+<td><strong>36W total</strong>, per Reliance Digital spec sheet; brand partnership (e.g. Onkyo/Harman) not stated</td>
+</tr>
+<tr>
+<td>Dolby Atmos / DTS</td>
+<td><strong>Dolby Atmos-Vision bundle marketed</strong> ("Dolby Vision-Atmos")</td>
+<td><strong>Dolby Atmos</strong> listed on Amazon spec sheet, alongside Dolby Audio</td>
+</tr>
+<tr>
+<td>Branded audio partner</td>
+<td><strong>Onkyo</strong> — a known, credible audio brand, explicitly named</td>
+<td>No named audio partner found in the listings — <span class="badge badge-gap">Data not available</span></td>
+</tr>
+<tr>
+<td>Bass/woofer, dialogue clarity, music/movie performance</td>
+<td>Not independently tested — <span class="badge badge-gap">Data not available</span>. TCL's 2.1 Onkyo systems in other models (per global reviews of similar TCL sets) are considered above-average for built-in TV audio, but that is model-general context, not proof for the T89D specifically</td>
+<td>Not independently tested — <span class="badge badge-gap">Data not available</span></td>
+</tr>
+<tr>
+<td>Need for soundbar</td>
+<td>At this screen size (75"), <strong>both brands' built-in speakers will be adequate for casual TV/streaming viewing but are unlikely to satisfy home-theatre-grade bass or dialogue clarity</strong> — this is a general truth of thin, large-screen TVs rather than a brand-specific weakness</td>
+<td></td>
+</tr>
+<tr>
+<td>eARC</td>
+<td>Not explicitly itemized for either — <span class="badge badge-gap">Data not available</span> (see Section 7)</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Edge:</strong> TCL, on paper, because it names a recognizable audio brand (Onkyo) at a specified 35W output, versus Philips' unbranded 36W figure.</p>
+<hr />
+</div></section>
+<section class="block"><h2 id="section-6-smart-tv-experience">SECTION 6 — SMART TV EXPERIENCE</h2><div class="block-body">
+<table>
+<thead>
+<tr>
+<th>Feature</th>
+<th>TCL T89D</th>
+<th>Philips 75MLED610/94</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>OS</td>
+<td><strong>Google TV</strong></td>
+<td><strong>Google TV 5.0</strong>, explicitly confirmed on Reliance Digital listing (a slightly newer/more specific version number than TCL's listing states)</td>
+</tr>
+<tr>
+<td>Processor</td>
+<td>Not disclosed for this SKU</td>
+<td><strong>"Quad Core Processor"</strong> stated (no clock speed / model number)</td>
+</tr>
+<tr>
+<td>RAM / storage</td>
+<td>Not disclosed for either SKU — <span class="badge badge-gap">Data not available</span></td>
+<td></td>
+</tr>
+<tr>
+<td>Software update history / cadence</td>
+<td>Real owner reviews of TCL's Google TV sets (see Section 11) mention periodic Google account/session logouts and occasional app-store bugs — a <em>software</em>, not hardware, complaint pattern</td>
+<td>No specific update-cadence complaints surfaced for this SKU, but Philips-India (SPPL) as a licensee generally updates Google TV firmware on the standard Google-mandated security cycle, similar to other budget Google TV brands — <strong>not independently verified for long-term update frequency</strong></td>
+</tr>
+<tr>
+<td>Ads presence</td>
+<td>Google TV's home screen carries platform-level content recommendations/ads regardless of brand (this is a Google TV OS characteristic, not specific to either manufacturer)</td>
+<td></td>
+</tr>
+<tr>
+<td>Voice assistant</td>
+<td>Google Assistant built-in for both (standard on Google TV)</td>
+<td></td>
+</tr>
+<tr>
+<td>Alexa</td>
+<td>Not natively built-in on Google TV sets typically, though Alexa can often control power/volume via skills — <strong><span class="badge badge-unclear">not confirmed</span> per-model</strong></td>
+<td></td>
+</tr>
+<tr>
+<td>AirPlay / HomeKit</td>
+<td><strong>Philips' Amazon listing explicitly states AirPlay 2 and Apple HomeKit support</strong> — this is a real differentiator if you're an iPhone/Mac household</td>
+<td>Not mentioned in TCL's listings — <strong><span class="badge badge-unclear">not confirmed</span> for T89D, and TCL does not typically emphasize AirPlay/HomeKit on its budget Google TV range</strong></td>
+</tr>
+<tr>
+<td>Chromecast / casting</td>
+<td>Built into Google TV for both</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Edge:</strong> Philips, specifically for Apple ecosystem users (AirPlay 2 + HomeKit is explicitly advertised, which TCL's listing does not claim).</p>
+<hr />
+</div></section>
+<section class="block"><h2 id="section-7-connectivity">SECTION 7 — CONNECTIVITY</h2><div class="block-body">
+<table>
+<thead>
+<tr>
+<th>Port/Feature</th>
+<th>TCL T89D</th>
+<th>Philips 75MLED610/94</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>HDMI ports</td>
+<td>Not specified in the listings reviewed — <span class="badge badge-gap">Data not available</span></td>
+<td><strong>3 HDMI ports</strong>, confirmed on Reliance Digital listing</td>
+</tr>
+<tr>
+<td>USB ports</td>
+<td>Not specified — <span class="badge badge-gap">Data not available</span></td>
+<td><strong>1 USB port</strong>, confirmed on Reliance Digital listing (notably low for a 75" flagship-adjacent set)</td>
+</tr>
+<tr>
+<td>LAN / Ethernet</td>
+<td>Not confirmed for either — <span class="badge badge-gap">Data not available</span></td>
+<td></td>
+</tr>
+<tr>
+<td>Optical audio out</td>
+<td>Not confirmed for either</td>
+<td></td>
+</tr>
+<tr>
+<td>Bluetooth version</td>
+<td>Not specified for either</td>
+<td></td>
+</tr>
+<tr>
+<td>Wi-Fi version</td>
+<td>Not specified for either (dual-band Wi-Fi is standard-assumed at this tier but <span class="badge badge-unclear">not confirmed</span>)</td>
+<td></td>
+</tr>
+<tr>
+<td>eARC</td>
+<td>Not explicitly confirmed for either</td>
+<td></td>
+</tr>
+<tr>
+<td>CEC</td>
+<td>Standard on Google TV sets generally; not brand-specific confirmed</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Notable finding:</strong> Philips' 3 HDMI + 1 USB port count is unusually modest for a 75" set in 2026 (most competitors in this price band offer 3–4 HDMI including at least one HDMI 2.1, and 2 USB ports). If port count matters to you (soundbar + console + streaming box + set-top box all at once), <strong>verify TCL's exact port count in person or via the box/manual before buying</strong>, since it wasn't published in the sources found — and note Philips' confirmed 1-USB-port limitation may be a real practical constraint.</p>
+<hr />
+</div></section>
+<section class="block"><h2 id="section-8-build-quality">SECTION 8 — BUILD QUALITY</h2><div class="block-body">
+<p>Neither brand publishes structured build-quality data (weight, thickness, stand footprint) for these exact SKUs in the sources I found. What can be said reliably:</p>
+<ul>
+<li>
+<p>Both are 75" flat-panel Mini-LED-class sets, which are inherently heavy (commonly 25–35 kg without stand at this size across the industry) and require two people to safely unbox/mount — this is a category norm, not a brand differentiator.</p>
+</li>
+<li>
+<p><span class="badge badge-gap">Data not available</span> on stand stability, cable management, remote build quality (beyond "voice remote"), or fit-and-finish for either model, since no outlet has done a hands-on unboxing/build review of these specific SKUs.</p>
+</li>
+<li>
+<p>General reputational context: TCL's global build quality (per FlatpanelsHD's hands-on reviews of its C-series/QM-series) is generally described as solid-if-plain, functional, mass-market design — "not beautiful, but neat" was FlatpanelsHD's verdict on a related TCL model. This is indicative of TCL's general design philosophy but <strong>not proof of the T89D's specific build</strong>.</p>
+</li>
+</ul>
+<hr />
+</div></section>
+<section class="block"><h2 id="section-9-long-term-reliability">SECTION 9 — LONG-TERM RELIABILITY</h2><div class="block-body">
+<p>This is the section where "<span class="badge badge-gap">Data not available</span>" is most honest, because <strong>2026 models by definition cannot yet have 5–10 years of ownership data.</strong> No one has owned either TV for more than a few months. Anyone giving you a confident "average lifespan" or "failure rate" figure for the T89D or 75MLED610/94 specifically is guessing. What I <em>can</em> give you is real, sourced pattern data from each brand's broader India track record:</p>
+<p><strong>TCL (brand-level, India):</strong></p>
+<ul>
+<li>
+<p>A verified 2025 HiFiVision forum thread documents a customer who received a <strong>DOA (dead-on-arrival) faulty panel on a TCL 75Q6C Mini-LED TV</strong> purchased via Amazon during a sale event, and then experienced a <strong>multi-week (16+ day, extending toward 20-25 day) replacement delay</strong>, with TCL's own "escalation department" unable to give a firm timeline, and Amazon eventually stepping in to offer a refund after the brand failed to resolve it.</p>
+</li>
+<li>
+<p>A separate HiFiVision thread describes a <strong>panel failure during the warranty period</strong> where the technician falsely claimed the replacement panel was unavailable (despite it being available in the local market), requiring a legal notice to resolve.</p>
+</li>
+<li>
+<p>These are <strong>anecdotal but verifiable, first-hand, dated reports</strong> — not a statistically representative failure rate, but a real pattern of <strong>slow/unreliable escalation and replacement-part logistics</strong> when things do go wrong, especially for large-panel Mini-LED sets sold through online marketplaces during high-volume sale periods.</p>
+</li>
+</ul>
+<p><strong>Philips (brand-level, India — via SPPL/Skyworth license):</strong></p>
+<ul>
+<li>
+<p>A <strong>January 2026 consumer court ruling</strong> (Ernakulam District Consumer Disputes Redressal Commission) found <strong>Philips India and its retail partner liable for denying warranty/extended-warranty service</strong> on a Philips LED TV, awarding the customer repair-or-refund plus ₹15,000 compensation for "deliberate, arbitrary and unfair" conduct. This is a formal legal finding, not a forum anecdote, and it post-dates the SPPL/Skyworth relaunch context.</p>
+</li>
+<li>
+<p>Multiple older but consistent forum/consumer-site threads (HiFiVision, MouthShut, JustDial, AVForums, Trustpilot) describe a <strong>long-standing pattern of poor after-sales responsiveness</strong> under the Philips brand in India across multiple TV licensees over the past decade — this pattern predates the current SPPL license but is worth knowing given it's the same <em>brand name</em> (even though the manufacturing entity keeps changing hands: Videocon → TPV → SPPL/Skyworth).</p>
+</li>
+<li>
+<p>Because the current SPPL-manufactured Philips India TVs are new to market, <strong>there isn't yet enough post-2025 owner data specific to the SPPL era to say whether this pattern continues</strong> — this is a genuine unknown, not a settled verdict against the current product line.</p>
+</li>
+</ul>
+<p><strong>Common failure categories to watch for on any large-panel Mini-LED TV in India (industry-general, not brand-specific):</strong> voltage-related power supply stress (India's less-regulated grid voltage is a widely-cited stress factor across all TV brands per multiple forum threads), backlight/zone failures, and Wi-Fi/software bugs on Google TV (session logouts, app crashes) — the T89D's own Flipkart reviews (Section 11) already show a live example of the Google-account-logout software bug.</p>
+<p><strong>Bottom line:</strong> you cannot get a real 5–10-year reliability verdict on a model that's been on sale for a few months. What you <em>can</em> rely on is that <strong>both brands have documented, verifiable histories of slow or adversarial after-sales service in India when something does go wrong</strong> — which should inform how much you value the extended warranty (see Section 19) rather than which specific TV you pick.</p>
+<hr />
+</div></section>
+<section class="block"><h2 id="section-10-after-sales-service-india-specific">SECTION 10 — AFTER-SALES SERVICE (India-specific)</h2><div class="block-body">
+<table>
+<thead>
+<tr>
+<th>Factor</th>
+<th>TCL</th>
+<th>Philips (India, via SPPL)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Service network</td>
+<td>TCL has built out a large offline/service footprint in India given its strong market share in the budget-to-mid TV segment</td>
+<td>SPPL services multiple licensed brands (Kodak, Thomson, Blaupunkt, Westinghouse, Philips) — likely a shared service network across brands, which can mean broader physical reach but less brand-specific specialization</td>
+</tr>
+<tr>
+<td>Installation experience</td>
+<td>Mixed real reports: one HiFiVision user reported installation could not be completed for weeks with Amazon and TCL "pointing fingers at each other"</td>
+<td>Not specifically documented in the sources found for this SKU — <span class="badge badge-gap">Data not available</span></td>
+</tr>
+<tr>
+<td>Replacement/repair speed</td>
+<td>Documented case: <strong>16+ days and counting</strong>, extending toward 20-25 days, for a DOA panel replacement</td>
+<td>Documented case (different product category but same brand/company conduct pattern): <strong>warranty service outright denied</strong>, requiring a consumer court order to resolve</td>
+</tr>
+<tr>
+<td>Warranty claim experience</td>
+<td>Forum-documented friction requiring legal threats to get resolution in at least one panel-failure case</td>
+<td>Consumer-court-documented friction; commission explicitly used the words "deliberate, arbitrary and unfair"</td>
+</tr>
+<tr>
+<td>Customer support quality</td>
+<td>User reports describe <strong>call center staff unable to escalate</strong>, generic "wait 2–3 more days" responses</td>
+<td>Multiple independent sources (JustDial, MouthShut, Trustpilot, AVForums) over many years describe <strong>persistently poor</strong> call-center responsiveness under the Philips brand name in India, across licensees</td>
+</tr>
+<tr>
+<td>Overall pattern</td>
+<td><strong>Neither brand has a strong, verifiable after-sales reputation in India.</strong> Both have documented cases of real friction. If forced to differentiate: the TCL case involved <em>slow logistics</em> (replacement part delay), while the Philips case involved the <em>company refusing to honor the warranty at all</em> until forced by a legal body — arguably the more serious failure mode, though it's one data point against one data point and shouldn't be over-generalized.</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<hr />
+</div></section>
+<section class="block"><h2 id="section-11-real-user-experience-amazon-flipkart-forums">SECTION 11 — REAL USER EXPERIENCE (Amazon / Flipkart / forums)</h2><div class="block-body">
+<p><strong>TCL T89D — from actual Flipkart reviews on this listing:</strong></p>
+<ul>
+<li>
+<p>Positive: <em>"Quality was good and sound also good"</em>; <em>"Picture quality awesome, sound quality awesome."</em></p>
+</li>
+<li>
+<p>Negative/recurring: <strong>Google account randomly logs out</strong>, requiring repeated re-login, including through the TCL Home companion app — a <strong>real, verified software bug reported by an actual buyer of this model.</strong></p>
+</li>
+<li>
+<p>Negative: One reviewer noted <strong>fast-motion content (specifically cricket, e.g., a fast-moving ball) isn't fully clear</strong> — a real motion-clarity complaint from an actual owner, consistent with budget-tier motion processing limitations.</p>
+</li>
+<li>
+<p>Note: some of the "reviews" attached to this Flipkart listing are for other TCL screen sizes/years (e.g., a 55" 2025 review) due to how Flipkart aggregates reviews across a product family — treat individual star ratings on the page with some caution for that reason.</p>
+</li>
+</ul>
+<p><strong>Philips 75MLED610/94 — from actual Amazon.in reviews on this listing:</strong></p>
+<ul>
+<li>
+<p>Positive (aggregated from "43 customers mention picture quality — 37 positive, 6 negative"): reviewers describe <strong>"true-to-life visuals," "deep blacks, bright highlights, vibrant colors,"</strong> and call the motion handling <strong>"smooth"</strong> for movies and sports.</p>
+</li>
+<li>
+<p>Positive: one reviewer specifically praised the <strong>120Hz refresh + "game accelerator" features</strong> for smooth, low-input-lag gaming (subjective owner impression, not a lab measurement).</p>
+</li>
+<li>
+<p>Positive: reviewers describe the Google TV interface as <strong>"fast and easy to navigate."</strong></p>
+</li>
+<li>
+<p>Context: one review explicitly frames the purchase as a <strong>budget-conscious choice trusting the legacy "Philips" name</strong> ("was stretched on budget but wanted a good quality... respected Philips for its quality") — worth noting given the brand-manufacturing caveat in Section 1.</p>
+</li>
+<li>
+<p>Negative: 6 of the 43 picture-quality mentions were negative — the specific complaints weren't detailed in the aggregated snippet, so <strong>exact negative themes are not available</strong> from what I could retrieve.</p>
+</li>
+</ul>
+<p><strong>Recurring pattern across both:</strong> picture quality is consistently praised by real buyers of both sets at this price point; the more common complaints are <strong>software/connectivity quirks</strong> (TCL: account logout bug; general Google TV: occasional slowness) rather than fundamental panel/hardware defects — consistent with what you'd expect from budget/mid-range Mini-LED Google TVs broadly.</p>
+<hr />
+</div></section>
+<section class="block"><h2 id="section-12-movie-performance">SECTION 12 — MOVIE PERFORMANCE</h2><div class="block-body">
+<p>Both support Netflix, Prime Video, Disney+ Hotstar (JioHotstar branding in India), and Apple TV+ via Google TV's app ecosystem — this is an OS-level guarantee, not a hardware differentiator. Both support Dolby Vision, giving proper dynamic-HDR mastering for most premium streaming titles.</p>
+<p><strong>Dark-room/black-level/color-accuracy performance:</strong> <span class="badge badge-gap">Data not available</span> — no independent lab review exists for either. Real owner reviews (Section 11) suggest both perform respectably for the price, but owner impressions of "deep blacks" on a Mini-LED set in a normally-lit living room are not a substitute for a controlled dark-room contrast test.</p>
+<hr />
+</div></section>
+<section class="block"><h2 id="section-13-sports-performance">SECTION 13 — SPORTS PERFORMANCE</h2><div class="block-body">
+<ul>
+<li>
+<p>TCL: <strong>explicit real-owner complaint about fast motion (cricket ball) not being fully clear</strong> — a genuine, sport-specific motion-clarity data point from an actual buyer, which is more concrete evidence than anything found for the Philips set in this category.</p>
+</li>
+<li>
+<p>Philips: one reviewer praised smooth motion handling generally, calling it good "for fast-paced action," though this wasn't sport-specific.</p>
+</li>
+<li>
+<p>Both claim MEMC (motion estimation/compensation) for interpolation; <strong>neither has an independently measured judder/ghosting result.</strong></p>
+</li>
+<li>
+<p>TCL's higher native (144Hz vs 120Hz) and interpolated (DLG 288Hz) refresh specs suggest it <em>should</em> have a motion-processing edge on paper, but the one concrete real-world sports complaint currently on record is against the TCL, which is worth weighing against the spec sheet.</p>
+</li>
+</ul>
+<hr />
+</div></section>
+<section class="block"><h2 id="section-14-day-vs-night-performance">SECTION 14 — DAY VS NIGHT PERFORMANCE</h2><div class="block-body">
+<p><span class="badge badge-gap">Data not available</span> for either — anti-reflection coating type, matte vs. glossy finish, and measured reflection handling are not published or independently tested for either SKU. General category context: Mini-LED/QLED panels at this price point typically use a semi-glossy finish that handles moderate ambient light reasonably well but will show visible reflections against bright windows or direct overhead lighting — true of most non-matte LCD TVs in this segment, not a specific claim about either brand's coating quality.</p>
+<hr />
+</div></section>
+<section class="block"><h2 id="section-15-power-consumption">SECTION 15 — POWER CONSUMPTION</h2><div class="block-body">
+<p>Not published for either specific SKU. For context only, a related Philips 75" listing (a different but comparable model, the 75MLED610 non-"/94" variant) lists a <strong>standby consumption of 0.5W</strong> and 100–240V universal voltage support — useful as a general Philips-India spec pattern, but <strong><span class="badge badge-unclear">not confirmed</span> as identical for the 75MLED610/94</strong> reviewed here. Typical consumption and annual electricity cost for either model: <strong><span class="badge badge-gap">Data not available</span>.</strong></p>
+<hr />
+</div></section>
+<section class="block"><h2 id="section-16-value-for-money">SECTION 16 — VALUE FOR MONEY</h2><div class="block-body">
+<table>
+<thead>
+<tr>
+<th>Factor</th>
+<th>TCL T89D (₹89,999)</th>
+<th>Philips 75MLED610/94 (₹79,999–₹81,990)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Price per inch</td>
+<td>Higher listed price</td>
+<td>~10-12% cheaper at time of data collection</td>
+</tr>
+<tr>
+<td>Feature list depth</td>
+<td>144Hz native + DLG288 + named Onkyo audio + Dolby Vision-Atmos</td>
+<td>120Hz + AirPlay2/HomeKit + HDR10+ explicitly listed + ALLM explicitly listed</td>
+</tr>
+<tr>
+<td>Confirmed port count</td>
+<td>Not confirmed</td>
+<td>Confirmed but modest (3 HDMI / 1 USB)</td>
+</tr>
+<tr>
+<td>Resale value</td>
+<td>No secondary market data exists yet for a 2026-model-year TV — <span class="badge badge-gap">Data not available</span></td>
+<td>Same — <span class="badge badge-gap">Data not available</span></td>
+</tr>
+<tr>
+<td>Future-proofing</td>
+<td>144Hz panel and DLG288 claim are nominally more "future-proof" for gaming if VRR/4K120 is fully implemented (unconfirmed)</td>
+<td>HDR10+ and Apple ecosystem integration are nominally more future-proof for a mixed-device household</td>
+</tr>
+</tbody>
+</table>
+<p>At the current price gap (~₹8,000–₹10,000, i.e., roughly 10%), the Philips is the better nominal value <strong>if</strong> its narrower port count and unconfirmed after-sales track record under the new SPPL ownership don't bother you. The TCL's price premium buys a higher-spec gaming panel on paper and a named audio brand (Onkyo), but comes with a <strong>documented, real, dated example of slow replacement-part logistics</strong> in Section 9/10.</p>
+<hr />
+</div></section>
+<section class="block"><h2 id="section-17-pros-cons">SECTION 17 — PROS &amp; CONS</h2><div class="block-body">
+<h3 id="tcl-t89d-pros">TCL T89D — Pros</h3>
+<ol>
+<li>
+<p>Higher native refresh rate (144Hz) than the Philips (120Hz)</p>
+</li>
+<li>
+<p>DLG 288Hz interpolation claim, more aggressive than Philips' unspecified MEMC-only claim</p>
+</li>
+<li>
+<p>Named, credible audio brand (Onkyo) built in</p>
+</li>
+<li>
+<p>Explicit Dolby Vision + Atmos support</p>
+</li>
+<li>
+<p>QD-Mini LED + HVA panel aims at wider viewing angles than standard VA</p>
+</li>
+<li>
+<p>Real owner reviews confirm strong picture quality</p>
+</li>
+<li>
+<p>Strong offline + online retail presence in India (easier to physically inspect before buying)</p>
+</li>
+<li>
+<p>TCL sells directly under its own name (no third-party brand-licensing ambiguity)</p>
+</li>
+<li>
+<p>Larger family of TCL 75" models (T8D, T89C, C6K, C8K) gives you upgrade/downgrade comparison options from the same brand</p>
+</li>
+<li>
+<p>Flipkart listing includes exchange offer + 30-day replacement guarantee</p>
+</li>
+<li>
+<p>TCL's global track record (via FlatpanelsHD/RTINGS reviews of its flagship models) shows the company is a serious, competent panel engineer — even if this specific SKU isn't reviewed, the parent company's competence is well documented</p>
+</li>
+<li>
+<p>Google TV OS gives full access to the standard app ecosystem</p>
+</li>
+<li>
+<p>Good motion-handling spec sheet (144/288Hz) for sports/gaming enthusiasts on paper</p>
+</li>
+<li>
+<p>TCL CSOT is a major global panel supplier, suggesting reasonable underlying panel-supply-chain quality even at budget tiers</p>
+</li>
+<li>
+<p>Wide model-family availability (55"/65"/75") for matching other rooms in the same household to the same design language</p>
+</li>
+</ol>
+<h3 id="tcl-t89d-cons">TCL T89D — Cons</h3>
+<ol>
+<li>
+<p><strong>No independent lab review exists — buying on marketing specs alone</strong></p>
+</li>
+<li>
+<p>Documented real-world software bug: random Google account logout, requiring repeated re-login</p>
+</li>
+<li>
+<p>Documented real-world complaint: fast motion (cricket) not fully clear despite the high refresh-rate spec sheet</p>
+</li>
+<li>
+<p>HDMI port count and HDMI 2.1 bandwidth not disclosed — unclear how many ports support 4K120/VRR</p>
+</li>
+<li>
+<p>USB port count not disclosed</p>
+</li>
+<li>
+<p>No AirPlay/HomeKit support mentioned — weaker for Apple-device households</p>
+</li>
+<li>
+<p>Higher price than the Philips for a comparable-tier feature set</p>
+</li>
+<li>
+<p>Documented HiFiVision case: a related TCL 75" Mini-LED model suffered a DOA panel and a 16+ day replacement delay with an unclear resolution timeline</p>
+</li>
+<li>
+<p>Documented HiFiVision case: a panel failure during warranty required legal threat to resolve, including a technician falsely claiming unavailable parts</p>
+</li>
+<li>
+<p>VRR/FreeSync support not explicitly confirmed for this SKU despite the high refresh-rate marketing</p>
+</li>
+<li>
+<p>Exact dimming zone count undisclosed, making true HDR performance impossible to verify against competitors</p>
+</li>
+<li>
+<p>No measured brightness figures published — "QD-Mini LED" is a technology label, not a performance guarantee</p>
+</li>
+<li>
+<p>Build quality (stand stability, remote quality, chassis rigidity) is completely undocumented for this SKU</p>
+</li>
+<li>
+<p>Panel manufacturer not officially confirmed (assumed CSOT, not verified)</p>
+</li>
+<li>
+<p>1-year warranty only — no extended coverage bundled</p>
+</li>
+<li>
+<p>No confirmed eARC or Ethernet/LAN port presence</p>
+</li>
+<li>
+<p>No confirmed Wi-Fi/Bluetooth version</p>
+</li>
+<li>
+<p>Amazon listing for this specific SKU wasn't found as prominently as Flipkart's — narrower price-comparison ability across your usual retailers</p>
+</li>
+<li>
+<p>TCL's own reviews page mixes ratings across different screen sizes/years for the same product family, making the visible star rating less reliable as a signal for the specific 75" 2026 unit</p>
+</li>
+<li>
+<p>No independently documented power consumption/standby figures</p>
+</li>
+</ol>
+<h3 id="philips-75mled61094-pros">Philips 75MLED610/94 — Pros</h3>
+<ol>
+<li>
+<p>Lower price than TCL at time of data collection (~10% cheaper)</p>
+</li>
+<li>
+<p>Explicit HDR10+ support in addition to Dolby Vision — broader dynamic-HDR format coverage</p>
+</li>
+<li>
+<p>Explicit AirPlay 2 and Apple HomeKit support — meaningful for iPhone/Mac households</p>
+</li>
+<li>
+<p>Explicit ALLM support listed</p>
+</li>
+<li>
+<p>178° wide-viewing-angle claim explicitly stated</p>
+</li>
+<li>
+<p>Google TV 5.0 (a specific, relatively current version number confirmed) vs TCL's unspecified Google TV version</p>
+</li>
+<li>
+<p>Real owner reviews (Amazon) are strongly positive on picture quality (37 of 43 mentions positive)</p>
+</li>
+<li>
+<p>Real owner reviews praise Google TV interface responsiveness ("fast and easy to navigate")</p>
+</li>
+<li>
+<p>Legacy brand trust — "Philips" carries decades of consumer recognition in India, which some buyers value even knowing the manufacturing has changed hands</p>
+</li>
+<li>
+<p>Confirmed 36W speaker output with Dolby Atmos + Dolby Audio support</p>
+</li>
+<li>
+<p>Confirmed listing across multiple major Indian retailers (Amazon, Reliance Digital) with consistent, cross-checked pricing</p>
+</li>
+<li>
+<p>Price has trended slightly downward recently, suggesting room for further discount-hunting</p>
+</li>
+<li>
+<p>Broader HDR format support (Dolby Vision + HDR10+) is a genuine practical advantage across streaming libraries</p>
+</li>
+<li>
+<p>Google Assistant voice remote standard</p>
+</li>
+<li>
+<p>Wall-mount compatible with standard VESA patterns (typical for the category, though not separately confirmed)</p>
+</li>
+<li>
+<p>1-year manufacturer warranty explicitly and clearly stated on the retailer listing (no ambiguity)</p>
+</li>
+</ol>
+<h3 id="philips-75mled61094-cons">Philips 75MLED610/94 — Cons</h3>
+<ol>
+<li>
+<p><strong>No independent lab review exists for this SKU either — same core limitation as TCL</strong></p>
+</li>
+<li>
+<p>Confirmed weak port count: only <strong>3 HDMI and 1 USB port</strong> — genuinely limiting if you run multiple HDMI devices (soundbar, console, streaming box) simultaneously</p>
+</li>
+<li>
+<p>Lower native refresh rate (120Hz) than TCL's 144Hz</p>
+</li>
+<li>
+<p>No named/branded audio partner (unlike TCL's Onkyo)</p>
+</li>
+<li>
+<p>Panel manufacturer, dimming zone count, and measured brightness all undisclosed</p>
+</li>
+<li>
+<p><strong>Brand-licensing complexity</strong>: "Philips" TVs in India are made by Super Plastronics under a Skyworth sub-license — not the same engineering organization behind European Philips Ambilight TVs, which can create a mismatch between brand expectations and delivered product/support quality</p>
+</li>
+<li>
+<p><strong>Documented, formal consumer-court finding (Jan 2026)</strong> against Philips India for denying warranty service — a more serious, legally-adjudicated failure mode than TCL's forum-level complaints</p>
+</li>
+<li>
+<p>Long, consistent multi-year pattern (across several different licensees/owners of the Philips TV brand in India) of poor customer-service responsiveness on review aggregators (JustDial, MouthShut, Trustpilot)</p>
+</li>
+<li>
+<p>6 of 43 Amazon picture-quality mentions were negative, and the specific complaint themes weren't retrievable from the aggregated snippet — an unresolved gap in the review data</p>
+</li>
+<li>
+<p>No confirmed eARC or eARC-adjacent audio-passthrough details</p>
+</li>
+<li>
+<p>No confirmed Ethernet/LAN or Bluetooth/Wi-Fi version</p>
+</li>
+<li>
+<p>No confirmed VRR/FreeSync/G-Sync support</p>
+</li>
+<li>
+<p>Newer to the Indian market post-relaunch (Jan 2025 SPPL partnership) — less institutional track record specifically under the current ownership/manufacturing structure than TCL's more continuous India presence</p>
+</li>
+<li>
+<p>Motion-clarity claims are less aggressive on paper (MEMC only, no equivalent to TCL's DLG288 claim)</p>
+</li>
+<li>
+<p>Amazon listing itself doesn't specify a processor clock speed or chip name — "Quad Core Processor" alone is a marketing-level claim with limited technical substance</p>
+</li>
+<li>
+<p>Build-quality documentation (stand, remote, chassis) entirely absent, same as TCL</p>
+</li>
+<li>
+<p>Standby power consumption figure found (0.5W) is sourced from a related-but-different Philips 75" model listing, <span class="badge badge-unclear">not confirmed</span> as identical for this exact "/94" variant</p>
+</li>
+<li>
+<p>No confirmed extended warranty pricing published</p>
+</li>
+<li>
+<p>No confirmed installation/wall-mount inclusion</p>
+</li>
+<li>
+<p>Historical Philips brand reputation in India (across multiple past licensees, going back over a decade) has been consistently poor enough that it shows up repeatedly across independent review platforms spanning 2008–2026 — a genuinely long pattern, even accounting for different manufacturing owners over time</p>
+</li>
+</ol>
+<hr />
+</div></section>
+<section class="block"><h2 id="section-18-scoring-out-of-100">SECTION 18 — SCORING (out of 100)</h2><div class="block-body">
+<p><strong>Important caveat on scoring:</strong> Because neither TV has independent lab data, these scores are <strong>not</strong> RTINGS-style measured performance scores. They reflect a synthesis of (a) confirmed spec-sheet completeness/competitiveness, (b) real verified owner-review sentiment, and (c) documented brand-level service/reliability patterns. Treat them as <strong>directional judgment calls, not precision ratings</strong> — I'm flagging that explicitly rather than presenting false precision.</p>
+<table>
+<thead>
+<tr>
+<th>Category</th>
+<th>TCL T89D</th>
+<th>Philips 75MLED610/94</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Picture Quality (spec + owner sentiment)</td>
+<td>68</td>
+<td>68</td>
+</tr>
+<tr>
+<td>HDR</td>
+<td>60 (DV+Atmos confirmed, HDR10+ unconfirmed)</td>
+<td>68 (DV + HDR10+ both confirmed)</td>
+</tr>
+<tr>
+<td>Gaming</td>
+<td>65 (higher Hz, but VRR/HDMI2.1 unconfirmed)</td>
+<td>55 (lower Hz, ALLM confirmed, VRR unconfirmed)</td>
+</tr>
+<tr>
+<td>Sports</td>
+<td>58 (real motion-clarity complaint on record)</td>
+<td>62 (positive but unspecific motion feedback)</td>
+</tr>
+<tr>
+<td>Movies</td>
+<td>65</td>
+<td>66 (broader HDR format coverage)</td>
+</tr>
+<tr>
+<td>Audio</td>
+<td>66 (named Onkyo brand)</td>
+<td>58 (unbranded, same wattage class)</td>
+</tr>
+<tr>
+<td>Smart Features</td>
+<td>64</td>
+<td>70 (AirPlay2/HomeKit, GTV5.0 confirmed)</td>
+</tr>
+<tr>
+<td>Build Quality</td>
+<td>50 (undocumented)</td>
+<td>48 (undocumented, plus known port limitation)</td>
+</tr>
+<tr>
+<td>Reliability (brand pattern)</td>
+<td>55 (forum-documented delays)</td>
+<td>48 (consumer-court-documented denial)</td>
+</tr>
+<tr>
+<td>After-Sales Service</td>
+<td>52</td>
+<td>46</td>
+</tr>
+<tr>
+<td>Value for Money</td>
+<td>62</td>
+<td>70 (cheaper, more confirmed features)</td>
+</tr>
+<tr>
+<td>Overall Ownership Experience</td>
+<td>60</td>
+<td>61</td>
+</tr>
+</tbody>
+</table>
+<hr />
+</div></section>
+<section class="block"><h2 id="section-19-final-verdict">SECTION 19 — FINAL VERDICT</h2><div class="block-body">
+<h3 id="which-would-i-buy">Which would I buy?</h3>
+<p>Genuinely, this is close, and I want to be honest that I can't give you a lab-backed "TV A wins on picture quality" answer because that data doesn't exist for either set. <strong>Weighing confirmed specs, real owner sentiment, and after-sales risk together, I'd lean toward the Philips 75MLED610/94</strong> — mainly because of its lower price, its explicit HDR10+ support alongside Dolby Vision (broader real-world content compatibility), and its Apple AirPlay/HomeKit integration, which are all <em>confirmed</em> advantages rather than marketing claims. I would not call this a confident or emphatic recommendation — the port-count limitation (3 HDMI/1 USB) and the documented consumer-court finding against Philips India's warranty conduct are real, non-trivial downsides that could matter more to you than they do to a "typical" buyer.</p>
+<h3 id="who-should-buy-the-tcl-t89d">Who should buy the TCL T89D?</h3>
+<ul>
+<li>
+<p>Gamers who want the highest native refresh rate available in this segment and value a named, credible audio brand (Onkyo) over Apple-device integration.</p>
+</li>
+<li>
+<p>Buyers who prioritize being able to walk into a Croma/Vijay Sales/Reliance Digital and physically test the set before buying, given TCL's broader offline retail footprint.</p>
+</li>
+<li>
+<p>Households that don't use Apple devices and don't need AirPlay/HomeKit.</p>
+</li>
+</ul>
+<h3 id="who-should-buy-the-philips-75mled61094">Who should buy the Philips 75MLED610/94?</h3>
+<ul>
+<li>
+<p>Apple-ecosystem households (iPhone/Mac users who want native AirPlay/HomeKit).</p>
+</li>
+<li>
+<p>Buyers who prioritize dual dynamic-HDR format support (Dolby Vision + HDR10+) for maximum streaming-service compatibility.</p>
+</li>
+<li>
+<p>Budget-conscious buyers for whom the ~₹8,000–10,000 price gap matters, and who don't run more than 2–3 HDMI devices simultaneously.</p>
+</li>
+</ul>
+<h3 id="is-the-price-difference-justified">Is the price difference justified?</h3>
+<p>Marginally, and only if you specifically value the TCL's higher refresh rate and named audio brand. On a pure feature-confirmed-per-rupee basis, the Philips currently looks like better value.</p>
+<h3 id="would-i-wait-for-a-sale">Would I wait for a sale?</h3>
+<p>Yes. Both listed MRPs (₹1,79,990 for TCL, ₹1,89,999 for Philips) are already being discounted by more than 50% to reach current street prices, which tells you the "real" market-clearing price is well below MRP — and India's major sale calendar events (festive-season sales, Republic Day sales, Amazon/Flipkart anniversary sales) routinely push prices on 75" sets in this segment down further, sometimes by another 5–10% beyond the "everyday" discounted price. Buying outside a sale window on either model is very likely leaving money on the table.</p>
+<h3 id="would-i-recommend-an-extended-warranty">Would I recommend an extended warranty?</h3>
+<p><strong>Yes, on either TV</strong>, and I'd treat it as close to non-optional. The documented after-sales patterns in Sections 9–10 — a real, dated case of TCL taking 16+ days (extending toward 20-25) to resolve a DOA panel, and a real, legally-adjudicated case of Philips India denying warranty service outright — are exactly the scenario an extended warranty (ideally purchased through the marketplace, e.g., Amazon's own protection plan, rather than relying solely on the OEM) is designed to protect against. A large-panel Mini-LED TV is precisely the kind of product where a backlight or panel-driver fault 14–20 months in is a realistic, non-remote risk.</p>
+<h3 id="expected-lifespan-of-each">Expected lifespan of each</h3>
+<p><span class="badge badge-gap">Data not available</span> with any specificity — these are 2026-model TVs with no field-failure history yet. Industry-typical LCD/Mini-LED backlight half-life estimates (an informal but widely used engineering benchmark) suggest usable performance for <strong>5+ years of normal daily use</strong> is a reasonable expectation for a properly ventilated, stable-voltage installation, but this is a general LCD-category expectation, not a brand-specific guarantee for either model.</p>
+<h3 id="expected-maintenance-costs">Expected maintenance costs</h3>
+<p>Beyond the 1-year included warranty, expect to budget for either an extended warranty (category-typical ₹3,000–₹7,000 for a 75" set, though <span class="badge badge-unclear">not confirmed</span> for these exact SKUs) or, if self-insuring, a realistic possibility of a <strong>₹15,000–₹40,000+ out-of-warranty panel or backlight repair</strong> should something fail after year one — this range reflects general large-panel LCD/Mini-LED repair-cost patterns in India, not a specific quote for either model.</p>
+<h3 id="potential-risks">Potential risks</h3>
+<ol>
+<li>
+<p>Buying based on unverified marketing specs (nits, dimming zones, contrast) that no independent outlet has confirmed for either model.</p>
+</li>
+<li>
+<p>After-sales friction documented for both brands, with Philips having the more serious (legally adjudicated) failure mode on record.</p>
+</li>
+<li>
+<p>Voltage-related stress on large-panel electronics, a commonly cited factor across brands in India regardless of TV brand.</p>
+</li>
+<li>
+<p>Software-level bugs (confirmed for TCL: account logout) that are annoying but not catastrophic.</p>
+</li>
+<li>
+<p>For Philips specifically: the ongoing brand-licensee transition (Videocon → TPV → SPPL/Skyworth since Jan 2025) means the current product line has a shorter institutional track record than TCL's more continuous India operation.</p>
+</li>
+</ol>
+<h3 id="alternative-tvs-in-the-same-price-range-worth-considering">Alternative TVs in the same price range worth considering</h3>
+<p>Based on live pricing found during this research at similar 75" price points (₹80,000–₹1,05,000):</p>
+<ul>
+<li>
+<p><strong>TCL C6K 75" QD-Mini LED</strong> (~₹1,06,991) — a step up within TCL's own range, if you want more headroom over the T89D and can stretch the budget.</p>
+</li>
+<li>
+<p><strong>Xiaomi QLED TV X Pro (2026) 75"</strong> (~₹69,999) — significantly cheaper, DLG 120Hz, another Google TV option worth comparing on spec-per-rupee grounds.</p>
+</li>
+<li>
+<p><strong>Hisense U7Q 75" Mini-LED</strong> (~₹99,999) — a brand with a more established international Mini-LED reputation (RTINGS/HDTVTest do review Hisense's global U7-series relatives, though not necessarily this exact India SKU) if third-party validation matters more to you than price.</p>
+</li>
+<li>
+<p><strong>TCL T89C 75"</strong> (~₹84,990) — TCL's own prior-generation-adjacent sibling to the T89D, worth cross-shopping within the same brand.</p>
+</li>
+</ul>
+<p>I did not independently lab-verify any of these alternatives either — they're offered as <strong>price-comparable shopping leads</strong>, not endorsed replacements.</p>
+<hr />
+</div></section>
+<section class="block"><h2 id="summary-table-quick-reference">SUMMARY TABLE — QUICK REFERENCE</h2><div class="block-body">
+<table>
+<thead>
+<tr>
+<th></th>
+<th>TCL T89D 75"</th>
+<th>Philips 75MLED610/94</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Price (mid-2026)</td>
+<td>₹89,999</td>
+<td>₹79,999–₹81,990</td>
+</tr>
+<tr>
+<td>Refresh rate</td>
+<td>144Hz native / DLG 288Hz</td>
+<td>120Hz native</td>
+</tr>
+<tr>
+<td>HDR formats</td>
+<td>Dolby Vision, Atmos (HDR10+ unconfirmed)</td>
+<td>Dolby Vision, HDR10+, Atmos</td>
+</tr>
+<tr>
+<td>Audio</td>
+<td>35W Onkyo 2.1</td>
+<td>36W, unbranded, Dolby Atmos/Audio</td>
+</tr>
+<tr>
+<td>Apple integration</td>
+<td>Not confirmed</td>
+<td>AirPlay 2 + HomeKit confirmed</td>
+</tr>
+<tr>
+<td>Confirmed ports</td>
+<td>Not disclosed</td>
+<td>3 HDMI / 1 USB</td>
+</tr>
+<tr>
+<td>OS</td>
+<td>Google TV</td>
+<td>Google TV 5.0</td>
+</tr>
+<tr>
+<td>Independent lab review</td>
+<td><strong>None found</strong></td>
+<td><strong>None found</strong></td>
+</tr>
+<tr>
+<td>Documented after-sales issue</td>
+<td>Forum-reported delay (16+ days) on a related model</td>
+<td>Consumer-court-confirmed warranty denial (Jan 2026)</td>
+</tr>
+<tr>
+<td>Warranty</td>
+<td>1 year</td>
+<td>1 year</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<p><em>Report compiled from live retailer listings, verified owner reviews, and dated forum/consumer-court records as of early July 2026. Where data could not be independently verified, this has been explicitly stated rather than estimated. Recommend re-checking live pricing before purchase, as both listings showed active price movement during research.</em></p></div></section>
+<footer class="report-footer">
+  <div>REPORT&nbsp;/ Compiled from live retailer listings, verified owner reviews, and dated forum &amp; consumer-court records as of early July 2026.</div>
+  <div style="margin-top:6px;">Prices and listings move frequently &mdash; re-check before purchase. Where primary-source data could not be found, this document says so explicitly rather than estimating.</div>
+</footer>
+
+</main>
+</div>
+
+<a href="#top" class="totop" id="totop" aria-label="Back to top">↑</a>
+<div id="top"></div>
+
+<script>
+// Build TOC from section h2 headers
+(function(){
+  const toc = document.getElementById('toc');
+  const items = [];
+
+  // Methodology note first
+  const preH2 = document.querySelector('.preface h2');
+  if(preH2){
+    const a = document.createElement('a');
+    a.href = '#' + preH2.id;
+    a.innerHTML = '<span class="toc-num">*</span>Methodology & data honesty';
+    toc.appendChild(a);
+    items.push({id: preH2.id, link: a});
+  }
+
+  document.querySelectorAll('.block').forEach((sec, idx) => {
+    const h2 = sec.querySelector('h2');
+    if(!h2) return;
+    if(!h2.id){ h2.id = 'sec-' + idx; }
+    const numMatch = h2.textContent.match(/SECTION\s+(\d+)/i);
+    const num = numMatch ? numMatch[1] : (idx+1);
+    h2.setAttribute('data-num', num);
+    let label = h2.textContent.replace(/SECTION\s+\d+\s*—\s*/i, '');
+    h2.textContent = label; // clean visible label, number now shown via ::before
+    const a = document.createElement('a');
+    a.href = '#' + h2.id;
+    a.innerHTML = '<span class="toc-num">' + num + '</span>' + label;
+    toc.appendChild(a);
+    items.push({id: h2.id, link: a});
+  });
+
+  // Active section highlight on scroll
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      const item = items.find(i => i.id === entry.target.id);
+      if(!item) return;
+      if(entry.isIntersecting){
+        items.forEach(i => i.link.classList.remove('active'));
+        item.link.classList.add('active');
+      }
+    });
+  }, {rootMargin: '-10% 0px -75% 0px'});
+  items.forEach(i => {
+    const el = document.getElementById(i.id);
+    if(el) observer.observe(el);
+  });
+
+  // Back to top visibility
+  const totop = document.getElementById('totop');
+  window.addEventListener('scroll', () => {
+    totop.classList.toggle('show', window.scrollY > 600);
+  });
+})();
+</script>
+</body>
+</html>
